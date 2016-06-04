@@ -13,6 +13,7 @@ local rdmrefunder_allowedranks = { -- Add ranks that have permission, include co
 
 local rdmrefunder_livestostore = 5 -- I'd recommend 5, feel free to add more.
 
+local rdmrefunder_restorepos = false -- Whether you want players to spawn at their place of death.
 ----------------------------------------------------------------------
 --- END OF CONFIG RUN AWAY IF YOU DON'T KNOW WHAT YOU'RE DOING PLZ ---
 ----------------------------------------------------------------------
@@ -31,9 +32,13 @@ hook.Add("PlayerDeath", "rdmrefunder_death", function(ply)
 
     ply.rdmrefunder_weapons[ply.rdmrefunder_life] = {} -- Create index with current life.
     table.insert(ply.rdmrefunder_weapons[ply.rdmrefunder_life], 1, timestring) -- Add timestamp to first position in the table.
+    table.insert(ply.rdmrefunder_weapons[ply.rdmrefunder_life], 2, ply:GetPos()) -- Add timestamp to first position in the table.
+
+    local i = 3
 
     for k, v in pairs (ply:GetWeapons()) do
-        table.insert(ply.rdmrefunder_weapons[ply.rdmrefunder_life], k + 1, v:GetClass()) -- Add players weapons to table.
+        table.insert(ply.rdmrefunder_weapons[ply.rdmrefunder_life], i, v:GetClass()) -- Add players weapons to table.
+        i = i + 1
     end
 
     ply.rdmrefunder_life = ply.rdmrefunder_life + 1 -- Increment life number.
@@ -70,7 +75,11 @@ net.Receive("rdmrefunder_refund",function(len, caller)
     if !table.HasValue(rdmrefunder_allowedranks, caller:GetUserGroup()) then return end -- Make sure haxors dont get their weps.
 
     for k, v in pairs (ply.rdmrefunder_weapons[life]) do
-        if k != 1 then -- Make sure not to run 1st value as it's the time!
+        if rdmrefunder_restorepos == true and k == 2 then -- Restore player to prev location if wanted.
+            ply:SetPos(v)
+        end
+
+        if k > 2 then -- Make sure not to run 1st or 2nd value as it's the time and last!
             ply:Give(v) -- Give them the weapons that correspond to that life :D
         end
     end
