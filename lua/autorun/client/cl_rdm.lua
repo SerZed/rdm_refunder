@@ -78,7 +78,7 @@ net.Receive("rdmrefunder_openmenu", function()
 	playerbox:CenterHorizontal()
     playerbox:SetValue( "Player to refund" )
     for k, v in pairs(player.GetAll()) do
-        playerbox:AddChoice(v:Nick(), v:SteamID(), false)
+        playerbox:AddChoice(v:Nick(), v, false)
     end
 
     lifebox = vgui.Create( "DComboBox", bg)
@@ -87,10 +87,10 @@ net.Receive("rdmrefunder_openmenu", function()
     lifebox:CenterHorizontal()
     lifebox:SetValue( "Life to refund" )
 
-    playerbox.OnSelect = function( index, value, data ) -- When selected loop players, loop their lives and add the times n stuff
-		local useless, steam_id = playerbox:GetSelected()
-		local ply = player.GetBySteamID(steam_id)
-		rdmrefunder_refresh(ply) -- Clean up
+    playerbox.OnSelect = function( self, index, value, data ) -- When selected loop players, loop their lives and add the times n stuff
+		print(data)
+		self.selectedplayer = data
+		rdmrefunder_refresh(data) -- Clean up
     end
 
     local submit = vgui.Create("DButton", bg)
@@ -108,9 +108,11 @@ net.Receive("rdmrefunder_openmenu", function()
 		local useless, life = lifebox:GetSelected()
 		ply.rdmrefunder_weapons[life] = nil
 
+		print(playerbox.selectedplayer)
+
 		net.Start("rdmrefunder_refund")
 		net.WriteInt(life, 32)
-		net.WriteEntity(ply)
+		net.WriteEntity(playerbox.selectedplayer)
 		net.SendToServer()
 
 		rdmrefunder_refresh(ply)
