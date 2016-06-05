@@ -11,6 +11,7 @@ Don't take my word for it, see it in action: https://www.youtube.com/watch?v=r-E
 
     Configurable amount of lives to save
     Simple and easy to use UI
+    Cheap
 
 # Installation
 
@@ -18,7 +19,7 @@ Don't take my word for it, see it in action: https://www.youtube.com/watch?v=r-E
     Drop it in your addons folder
     Tweak the config inside rdm_manager/lua/autorun/server/sv_rdm.lua
 
-# Usage
+Usage
 
 Once you've added yourself to the config use !refund or /refund to access the menu:
 
